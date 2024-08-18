@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Component, OnInit } from "@angular/core";
 import { Cart, CartItem } from "src/app/models/cart.model";
+import { CartService } from "src/app/services/cart.service";
 
 @Component({
   selector: "app-cart",
@@ -41,14 +42,27 @@ export class CartComponent implements OnInit {
     "action",
   ];
   dataSource: Array<CartItem> = [];
-  constructor() {}
+  constructor(private cartService: CartService) {}
 
   ngOnInit(): void {
-    this.dataSource = this.cart.items;
+    this.cartService.cart.subscribe((_cart: Cart) => {
+      this.cart = _cart;
+      this.dataSource = _cart.items;
+    });
   }
   getTotal(items: CartItem[]): number {
-    return items
-      .map((item) => item.price * item.quantity)
-      .reduce((prev, current) => prev + current, 0);
+    return this.cartService.getTotal(items);
+  }
+  onClearCart(): void {
+    this.cartService.clearCart();
+  }
+  onRemoveFromCart(item: CartItem): void {
+    this.cartService.removeFromCart(item);
+  }
+  onAddQuantity(item: CartItem): void {
+    this.cartService.addToCart(item);
+  }
+  onRemoveQuantity(item: CartItem): void {
+    this.cartService.removeQuantity(item);
   }
 }
