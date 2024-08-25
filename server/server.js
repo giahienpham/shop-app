@@ -6,9 +6,7 @@ app.use(express.static("public"));
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
 app.use(cors({ origin: true, credentials: true }));
-const stripe = require("stripe")(
-  "sk_test_51Q2qsUBMF5WMHxlt1WZKsKZSSQoee1gqXMXASYKHhpXfHq218x7GD3DKeg9koUb9u2h7dGKnzfeSSYTMuWaF9y4b009q8PRWgx"
-);
+const stripe = require("stripe")(process.env.SECRET_KEY);
 app.post("/checkout", async (req, res, next) => {
   try {
     const session = await stripe.checkout.sessions.create({
